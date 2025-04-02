@@ -3,7 +3,7 @@ CREATE DATABASE reThread;
 USE reThread;
 
 CREATE TABLE Location (
-    location_id SERIAL PRIMARY KEY,
+    location_id int PRIMARY KEY NOT NULL,
     city VARCHAR(100),
     state VARCHAR(100),
     zip VARCHAR(20),
@@ -11,14 +11,14 @@ CREATE TABLE Location (
 );
 
 CREATE TABLE Demographic (
-    demographic_id SERIAL PRIMARY KEY,
+    demographic_id int PRIMARY KEY NOT NULL,
     age VARCHAR(50),
     gender VARCHAR(20),
     location_id INT REFERENCES Location(location_id)
 );
 
 CREATE TABLE User (
-    user_id SERIAL PRIMARY KEY,
+    user_id int PRIMARY KEY NOT NULL,
     name VARCHAR(100),
     role VARCHAR(50),
     location_id INT REFERENCES Location(location_id),
@@ -26,31 +26,31 @@ CREATE TABLE User (
 );
 
 
-CREATE TABLE Group (
-    group_id SERIAL PRIMARY KEY,
+CREATE TABLE `Group` (
+    group_id int PRIMARY KEY NOT NULL,
     created_by INT REFERENCES User(user_id) ON DELETE SET NULL,
     name VARCHAR(100),
     type VARCHAR(50)
 );
 
 CREATE TABLE Tag (
-    tag_id SERIAL PRIMARY KEY,
+    tag_id int PRIMARY KEY NOt NULL,
     tag_name VARCHAR(100)
 );
 
 CREATE TABLE Listing (
-    listing_id SERIAL PRIMARY KEY,
+    listing_id int PRIMARY KEY NOT NULL,
     title VARCHAR(255),
     description TEXT,
     price DECIMAL(10,2),
-    condition VARCHAR(100),
+    `condition` VARCHAR(100),
     brand VARCHAR(100),
     size VARCHAR(10),
     material VARCHAR(100),
     color VARCHAR(50),
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     seller_id INT REFERENCES User(user_id) ON DELETE CASCADE,
-    group_id INT REFERENCES Group(group_id)
+    group_id INT REFERENCES `Group`(group_id)
 );
 
 CREATE TABLE SearchQuery (
@@ -58,12 +58,12 @@ CREATE TABLE SearchQuery (
     keyword VARCHAR(255),
     user_id INT REFERENCES User(user_id) ON DELETE CASCADE,
     location_id INT REFERENCES Location(location_id),
-    group_id INT REFERENCES Group(group_id),
+    group_id INT REFERENCES `Group`(group_id),
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE Transaction (
-    transaction_id SERIAL PRIMARY KEY,
+    transaction_id int PRIMARY KEY NOT NULL,
     listing_id INT REFERENCES Listing(listing_id),
     method VARCHAR(50),
     buyer_id INT REFERENCES User(user_id),
@@ -75,7 +75,7 @@ CREATE TABLE Transaction (
 );
 
 CREATE TABLE Review (
-    review_id SERIAL PRIMARY KEY,
+    review_id int PRIMARY KEY NOT NULL,
     reviewer_id INT REFERENCES User(user_id),
     reviewee_id INT REFERENCES User(user_id),
     comment TEXT,
@@ -84,7 +84,7 @@ CREATE TABLE Review (
 );
 
 CREATE TABLE Verification (
-    verification_id SERIAL PRIMARY KEY,
+    verification_id int PRIMARY KEY NOT NULL,
     user_id INT REFERENCES User(user_id) ON DELETE CASCADE,
     method VARCHAR(100),
     status VARCHAR(50),
@@ -92,7 +92,7 @@ CREATE TABLE Verification (
 );
 
 CREATE TABLE FlaggedContent (
-    flag_id SERIAL PRIMARY KEY,
+    flag_id int PRIMARY KEY NOT NULL,
     content_type VARCHAR(50),
     content_id INT,
     flagged_by INT REFERENCES User(user_id),
@@ -102,7 +102,7 @@ CREATE TABLE FlaggedContent (
 );
 
 CREATE TABLE Dispute (
-    dispute_id SERIAL PRIMARY KEY,
+    dispute_id int PRIMARY KEY NOT NULL,
     seller_id INT REFERENCES User(user_id),
     buyer_id INT REFERENCES User(user_id),
     listing_id INT REFERENCES Listing(listing_id),
@@ -113,12 +113,12 @@ CREATE TABLE Dispute (
 
 CREATE TABLE UserGroup (
     user_id INT REFERENCES User(user_id) ON DELETE CASCADE,
-    group_id INT REFERENCES Group(group_id) ON DELETE CASCADE,
+    group_id INT REFERENCES `Group`(group_id) ON DELETE CASCADE,
     PRIMARY KEY (user_id, group_id)
 );
 
 CREATE TABLE ListingPhoto (
-    photo_id SERIAL PRIMARY KEY,
+    photo_id int PRIMARY KEY NOT NULL,
     listing_id INT REFERENCES Listing(listing_id) ON DELETE CASCADE,
     tag_label VARCHAR(100),
     url TEXT
@@ -159,7 +159,7 @@ CREATE TABLE ListingAnalytics (
 );
 
 CREATE TABLE Message (
-    message_id SERIAL PRIMARY KEY,
+    message_id int PRIMARY KEY NOT NULL,
     sender_id INT REFERENCES User(user_id),
     recipient_id INT REFERENCES User(user_id),
     listing_id INT REFERENCES Listing(listing_id),
@@ -168,7 +168,7 @@ CREATE TABLE Message (
 );
 
 CREATE TABLE TrendReport (
-    report_id SERIAL PRIMARY KEY,
+    report_id int PRIMARY KEY NOT NULL,
     exported_format VARCHAR(20),
     title VARCHAR(255),
     summary TEXT,
@@ -178,19 +178,19 @@ CREATE TABLE TrendReport (
 );
 
 CREATE TABLE SearchTrend (
-    search_trend_id SERIAL PRIMARY KEY,
+    search_trend_id int PRIMARY KEY NOT NULL,
     usage_count INT,
     trend_date DATE,
     location_id INT REFERENCES Location(location_id),
-    group_id INT REFERENCES Group(group_id),
+    group_id INT REFERENCES `Group`(group_id),
     keyword VARCHAR(255)
 );
 
 CREATE TABLE TagTrend (
-    tag_trend_id SERIAL PRIMARY KEY,
+    tag_trend_id int PRIMARY KEY NOT NULL,
     usage_count INT,
     trend_date DATE,
     location_id INT REFERENCES Location(location_id),
-    group_id INT REFERENCES Group(group_id),
+    group_id INT REFERENCES `Group`(group_id),
     tag_id INT REFERENCES Tag(tag_id)
 );
