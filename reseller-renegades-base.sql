@@ -2,6 +2,30 @@ DROP DATABASE IF EXISTS reThread;
 CREATE DATABASE reThread;
 USE reThread;
 
+DROP TABLE IF EXISTS Message;
+DROP TABLE IF EXISTS Review;
+DROP TABLE IF EXISTS Transaction;
+DROP TABLE IF EXISTS SavedItems;
+DROP TABLE IF EXISTS ListingTag;
+DROP TABLE IF EXISTS Tag;
+DROP TABLE IF EXISTS ListingPhoto;
+DROP TABLE IF EXISTS ListingAnalytics;
+DROP TABLE IF EXISTS Listing;
+DROP TABLE IF EXISTS 'Group';
+DROP TABLE IF EXISTS UserGroup;
+DROP TABLE IF EXISTS Verification;
+DROP TABLE IF EXISTS Dispute;
+DROP TABLE IF EXISTS FlaggedContent;
+DROP TABLE IF EXISTS PriceHistory;
+DROP TABLE IF EXISTS SearchQuery;
+DROP TABLE IF EXISTS SearchTrend;
+DROP TABLE IF EXISTS TagTrend;
+DROP TABLE IF EXISTS TrendReport;
+DROP TABLE IF EXISTS User;
+DROP TABLE IF EXISTS Demographic;
+DROP TABLE IF EXISTS Location;
+DROP TABLE IF EXISTS CartItem;
+
 CREATE TABLE Location (
     location_id int PRIMARY KEY NOT NULL,
     city VARCHAR(100),
@@ -9,7 +33,6 @@ CREATE TABLE Location (
     zip VARCHAR(20),
     university VARCHAR(100)
 );
-
 CREATE TABLE Demographic (
     demographic_id int PRIMARY KEY NOT NULL,
     age VARCHAR(50),
@@ -35,7 +58,7 @@ CREATE TABLE `Group` (
 
 CREATE TABLE Tag (
     tag_id int PRIMARY KEY NOt NULL,
-    tag_name VARCHAR(100)
+    tag_name VARCHAR(100) UNIQUE
 );
 
 CREATE TABLE Listing (
@@ -170,7 +193,7 @@ CREATE TABLE Message (
 CREATE TABLE TrendReport (
     report_id int PRIMARY KEY NOT NULL,
     exported_format VARCHAR(20),
-    title VARCHAR(255),
+    title VARCHAR(255) UNIQUE,
     summary TEXT,
     filters JSON,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -194,3 +217,68 @@ CREATE TABLE TagTrend (
     group_id INT REFERENCES `Group`(group_id),
     tag_id INT REFERENCES Tag(tag_id)
 );
+
+-- Sample data
+-- Location
+INSERT INTO Location VALUES (1, 'New York City', 'NY', '10012', 'NYU');
+INSERT INTO Location VALUES (2, 'Boston', 'MA', '02115', 'Northeastern');
+
+-- Demographic
+INSERT INTO Demographic VALUES (10, '22', 'female', 1);
+INSERT INTO Demographic VALUES (11, '25', 'male', 2);
+
+-- User
+INSERT INTO User VALUES (123, 'Samantha', 'Shopper', 1, 10);
+INSERT INTO User VALUES (456, 'Fark Montenot', 'Analyst', 1, 10);
+INSERT INTO User VALUES (777, 'Ashley Admin', 'Admin', 1, 10);
+INSERT INTO User VALUES (789, 'Buyer Bob', 'Buyer', 1, 10);
+
+-- Group
+INSERT INTO `Group` VALUES (324, 777, 'Emo', 'Style');
+
+-- Tag
+INSERT INTO Tag VALUES (1, 'professional');
+INSERT INTO Tag VALUES (2, 'trendy');
+INSERT INTO Tag VALUES (3, 'vintage');
+
+-- Listing
+INSERT INTO Listing (listing_id, title, description, price, `condition`, brand, size, material, color, seller_id, group_id)
+VALUES (456, 'Lululemon Align Pants', 'Lorem ipsum dolor sit amet', 25.00, 'Like New', 'Lululemon', '6', 'Luon Blend', 'Navy', 123, 324);
+
+-- ListingTag
+INSERT INTO ListingTag VALUES (456, 1);
+INSERT INTO ListingTag VALUES (456, 2);
+
+-- SavedItems
+INSERT INTO SavedItems VALUES (123, 456, '2025-04-02 01:55:21');
+
+-- ListingPhoto
+INSERT INTO ListingPhoto VALUES (1, 456, 'pants', 'https://rethread.com/imgs/listing456-1.jpg');
+
+-- ListingAnalytics
+INSERT INTO ListingAnalytics VALUES (456, 10, 2, 5);
+
+-- Message
+INSERT INTO Message VALUES (1, 789, 123, 456, 'Hi! I have a question about this item.', '2025-04-02 01:55:21');
+
+-- Review
+INSERT INTO Review VALUES (1, 123, 789, 'Rude but responsive buyer.', '2025-04-02 01:55:21', 4);
+
+-- TrendReport
+INSERT INTO TrendReport VALUES (
+  100, 'CSV', 'Cherry Red Gains Momentum Among Young Shoppers',
+  'Sample summary here', '{"tag": "cherry red"}', '2025-04-02 01:55:21', 456
+);
+
+-- PriceHistory
+INSERT INTO PriceHistory VALUES (456, 25.00, '2025-04-02 01:55:21');
+INSERT INTO PriceHistory VALUES (456, 28.00, '2025-04-02 01:55:21');
+
+-- SearchQuery
+INSERT INTO SearchQuery (keyword, user_id, location_id, group_id) VALUES ('lululemon pants', 123, 1, 324);
+
+-- SearchTrend
+INSERT INTO SearchTrend VALUES (1, 100, CURRENT_DATE, 1, 324, 'lululemon');
+
+-- TagTrend
+INSERT INTO TagTrend VALUES (1, 75, CURRENT_DATE, 1, 324, 1);
